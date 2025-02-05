@@ -4,7 +4,7 @@ services:
     image: flashspys/nginx-static
     container_name: example.org
     ports:
-      - 80:80
+      - 8080:80
     volumes:
       - ./build:/static
       - /root/portfolio_tracker/my_nginx_conf.conf:/etc/nginx/conf.d/default.conf
