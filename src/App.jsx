@@ -198,11 +198,12 @@ function App() {
       flexDirection: "column",
       alignItems: "center", // Центрируем весь контент
       justifyContent: "center",
-      height: "100vh", // Высота на весь экран
+      minHeight: "100vh", // Высота на весь экран
       width: "100vw", // Заполняем всю ширину экрана
       textAlign: "center",
+      overflow: "auto",
     }}>
-      <h1 style={{marginBottom: "20px", marginTop: "200px"}}>🚀 Мой Портфель</h1>
+      <h1 style={{marginBottom: "60px", marginTop: "40px"}}>🚀 Мой Портфель</h1>
       
       <div style={{
         display: "flex",
