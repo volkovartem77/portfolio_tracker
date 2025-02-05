@@ -45,6 +45,7 @@ function App() {
   const [chartKey, setChartKey] = useState(0); // Ключ для ререндера графика
   const [availableTickers, setAvailableTickers] = useState([]);
   const [logMessage, setLogMessage] = useState("");
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   
   
   useEffect(() => {
@@ -53,6 +54,11 @@ function App() {
       setAvailableTickers(tickers);
     };
     loadTickers();
+    
+    // Отслеживание изменения размера окна
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
   
   useEffect(() => {
@@ -183,8 +189,8 @@ function App() {
     console.log("✅ Портфель сохранен, график перерисован.");
   };
   
-  
-  // const availableTickers = ["BTC", "ETH", "USDT", "BNB", "XRP", "ADA", "SOL"];
+  // Медиа-запрос: если экран меньше 768px — мобильная версия, иначе — десктоп
+  const isMobile = windowWidth < 768;
   
   return (
     <div style={{
@@ -196,26 +202,66 @@ function App() {
       width: "100vw", // Заполняем всю ширину экрана
       textAlign: "center",
     }}>
-      <h1 style={{ marginBottom: "20px" }}>🚀 Мой Портфель</h1>
+      <h1 style={{marginBottom: "20px", marginTop: "200px"}}>🚀 Мой Портфель</h1>
       
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-        <select value={selectedInterval} onChange={(e) => setSelectedInterval(e.target.value)}>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "10px",
+        width: "100%",
+      }}>
+        
+        {/* Таймфрейм - отдельная строка */}
+        <select
+          value={selectedInterval}
+          onChange={(e) => setSelectedInterval(e.target.value)}
+          style={{width: "150px", padding: "5px", fontSize: "16px", textAlign: "center"}}
+        >
           {availableIntervals.map((interval) => (
             <option key={interval} value={interval}>{interval}</option>
           ))}
         </select>
         
+        {/* Блок для активов */}
         {tempPortfolio.map((asset, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <select value={asset.ticker} onChange={(e) => handleInputChange(index, "ticker", e.target.value)}>
+          <div key={index} style={{
+            display: "flex",
+            flexDirection: "row", // Располагаем элементы в ряд
+            alignItems: "center",
+            gap: "10px",
+            width: "100%",
+            justifyContent: "center"
+          }}>
+            <select
+              value={asset.ticker}
+              onChange={(e) => handleInputChange(index, "ticker", e.target.value)}
+              style={{width: "120px", padding: "5px", fontSize: "16px"}}
+            >
               {availableTickers.map((ticker) => (
                 <option key={ticker} value={ticker}>{ticker}</option>
               ))}
             </select>
-            <input type="number" value={asset.amount}
-                   onChange={(e) => handleInputChange(index, "amount", parseFloat(e.target.value))}
-                   style={{ width: "80px" }} />
-            <button onClick={() => removeAsset(index)}>❌</button>
+            
+            <input
+              type="number"
+              value={asset.amount}
+              onChange={(e) => handleInputChange(index, "amount", parseFloat(e.target.value))}
+              style={{width: "80px", padding: "5px", fontSize: "16px", textAlign: "center"}}
+            />
+            
+            <button
+              onClick={() => removeAsset(index)}
+              style={{
+                padding: "5px",
+                fontSize: "16px",
+                cursor: "pointer",
+                background: "transparent",
+                border: "none"
+              }}
+            >
+              ❌
+            </button>
           </div>
         ))}
       </div>
@@ -224,14 +270,14 @@ function App() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "20px",
+        gap: "14px",
         margin: "20px 0",
       }}>
-        <button onClick={addAsset}>➕ Добавить актив</button>
-        <button onClick={savePortfolio}>💾 Сохранить изменения</button>
+        <button style={{fontSize: isMobile ? "10px" : "14px"}} onClick={addAsset}>➕ Добавить актив</button>
+        <button style={{fontSize: isMobile ? "10px" : "14px"}} onClick={savePortfolio}>💾 Сохранить изменения</button>
       </div>
       
-      <div style={{ marginBottom: "20px", fontSize: "14px", color: logMessage ? "gray" : "black" }}>
+      <div style={{marginBottom: "20px", fontSize: isMobile ? "8px" : "14px", color: logMessage ? "gray" : "black"}}>
         {logMessage}
       </div>
       
@@ -243,7 +289,7 @@ function App() {
         height: "500px", // Даем высоту для графика
       }}>
         {chartData.length > 0 ? (
-          <PortfolioChart key={chartKey} data={chartData} loadMoreHistory={loadMoreHistory} />
+          <PortfolioChart key={chartKey} data={chartData} loadMoreHistory={loadMoreHistory}/>
         ) : (
           <p>Загрузка данных...</p>
         )}
