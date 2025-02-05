@@ -6,5 +6,5 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./build:/static
+      - ./dist:/static
       - /root/portfolio_tracker/my_nginx_conf.conf:/etc/nginx/conf.d/default.conf
