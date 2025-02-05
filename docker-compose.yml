@@ -1,0 +1,9 @@
+version: '3'
+services:
+  example.org:
+    image: flashspys/nginx-static
+    container_name: example.org
+    ports:
+      - 80:80
+    volumes:
+      - ./build:/static
